@@ -1,13 +1,14 @@
 import { Dispatch, SetStateAction } from "react";
+import { Tool as ToolType } from "./RoomPage";
 
 export const Tool = ({
   toolName,
   checked,
   setTool,
 }: {
-  toolName: string;
+  toolName: ToolType;
   checked: boolean;
-  setTool: Dispatch<SetStateAction<string>>;
+  setTool: Dispatch<SetStateAction<ToolType>>;
 }) => {
   return (
     <div className=" gap-2 text-neutral-200">

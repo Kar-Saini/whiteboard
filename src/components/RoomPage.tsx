@@ -10,13 +10,15 @@ interface Element {
   y1?: number;
   x2?: number;
   y2?: number;
+  color?: string;
 }
-type Tool = "pencil" | "line" | "rectangle";
+export type Tool = "pencil" | "line" | "rectangle";
 const RoomPage = () => {
   const { roomId, name } = useParams();
   const [isDrawing, setIsDrawing] = useState(false);
   const [elements, setElements] = useState<Element[]>([]);
   const [tool, setTool] = useState<Tool>("pencil");
+  const [color, setColor] = useState("#000000");
   const startCoord = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -25,13 +27,14 @@ const RoomPage = () => {
 
   function handleMouseDown(e) {
     const { offsetX, offsetY } = e.nativeEvent;
+    console.log("Mouse Down - " + offsetX + " " + offsetY);
     startCoord.current = { x: offsetX, y: offsetY };
     setIsDrawing(true);
     if (tool === "pencil") {
-      const newPath: [number, number][] = [offsetX, offsetY];
+      const newPath: [number, number][] = [[offsetX, offsetY]];
       setElements((prevElements) => [
         ...prevElements,
-        { tool: "pencil", path: newPath },
+        { tool: "pencil", path: newPath, color },
       ]);
     } else if (tool === "rectangle" || tool === "line") {
       setElements((prevElements) => [
@@ -42,6 +45,7 @@ const RoomPage = () => {
           x2: offsetX,
           y1: offsetY,
           y2: offsetY,
+          color,
         },
       ]);
     }
@@ -85,11 +89,19 @@ const RoomPage = () => {
 
       elements.forEach((element) => {
         if (element.tool === "pencil") {
-          gen.linearPath(element.path!);
+          gen.linearPath(element.path!, {
+            stroke: element.color,
+            roughness: 0,
+          });
+          console.log("path : " + element.path);
         } else if (element.tool === "rectangle") {
           const { x1, x2, y1, y2 } = element;
           if (x1 && x2 && y1 && y2) {
-            roughCanvas.draw(gen?.rectangle(x1, y1, x2 - x1, y2 - y1));
+            roughCanvas.draw(
+              gen?.rectangle(x1, y1, x2 - x1, y2 - y1, {
+                stroke: element.color,
+              })
+            );
           }
         } else if (element.tool === "line") {
           const { x1, x2, y1, y2 } = element;
@@ -131,7 +143,15 @@ const RoomPage = () => {
             />
           </div>
           <div className="m-2">
-            <input type="color" id="color" className="m-1 p-1" />
+            <input
+              type="color"
+              id="color"
+              className="m-1 p-1"
+              value={color}
+              onChange={(e) => {
+                setColor(e.target.value);
+              }}
+            />
             <label htmlFor="color" className="m-1 text-neutral-300 ">
               Color
             </label>
@@ -156,7 +176,10 @@ const RoomPage = () => {
           onMouseMove={handleMouseMove}
           className="w-full bg-neutral-400 mx-10 rounded-2xl border-2 border-gray-700 h-[550px]"
         >
-          <canvas className="bg-neutral-200 w-full h-full" ref={canvasRef} />
+          <canvas
+            className="bg-neutral-200 w-full h-full rounded-2xl"
+            ref={canvasRef}
+          />
         </div>
       </div>
     </div>
