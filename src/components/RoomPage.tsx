@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { Tool } from "./Tool";
 import rough from "roughjs";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 interface Element {
   path?: [number, number][];
