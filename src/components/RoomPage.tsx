@@ -21,11 +21,7 @@ const RoomPage = () => {
   const [color, setColor] = useState("#000000");
   const startCoord = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  useEffect(() => {
-    const ctx = canvasRef.current?.getContext("2d");
-  }, []);
-
-  function handleMouseDown(e) {
+  function handleMouseDown(e: React.MouseEvent<HTMLDivElement>) {
     const { offsetX, offsetY } = e.nativeEvent;
     console.log("Mouse Down - " + offsetX + " " + offsetY);
     startCoord.current = { x: offsetX, y: offsetY };
@@ -50,7 +46,7 @@ const RoomPage = () => {
       ]);
     }
   }
-  function handleMouseMove(e) {
+  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
     if (!isDrawing) return;
     const { offsetX, offsetY } = e.nativeEvent;
     setElements((prevElements) => {
@@ -72,7 +68,7 @@ const RoomPage = () => {
       return prevElements;
     });
   }
-  function handleMouseUp(e) {
+  function handleMouseUp() {
     setIsDrawing(false);
   }
 
